@@ -2,7 +2,9 @@ const express = require('express');
 const Jimp = require('jimp')
 
 const bodyParser = require('body-parser')
-
+var jsonTools = require('./json-tools')
+const imgTools = require('./img-tools')
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 
 require("dotenv").config()
@@ -23,29 +25,60 @@ app.get('/', async (req,res)=>{
     res.send("hi")
 })
 
-app.get('/search/:msg', async (req,res)=>{
-    console.log(req.params.msg)
-    console.log("HI")
-    res.send("hi")
+app.get('/test', async (req,res)=>{
+
+    let createImgParams= {
+        msg: "message",
+        baseImg:"https://images.unsplash.com/photo-1650351858876-eec34590260c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+        time: new Date().toDateString(),
+        userAddress:"Address",
+        color:"white"
+    }
+    imgTools.createImg(createImgParams)
+})
+
+app.get('/new', async(req,res)=>{
+    //Return newest listings ie the OLDEST JSONS
+})
+
+app.post('/search', async(req,res)=>{
+    //Return listing based on param DATE, MSG
+    const searchParams = req.body //.date .msg
+
+})
+
+app.post('/gallery', async(req,res)=>{
+    //
+    const galleryParams = req.body // .startToken, .numberOfTokens
+
+    let result = await jsonTools.readGallery()
+    res.json(result)
+
+
 })
 
 app.post('/createImg', async(req,res)=>{
-    console.log("Called API for create Img", req.body.message)
-    const [text, imgLink, userAddress, time, color] = [req.body.message, req.body.baseImg, req.body.userAddress, req.body.time, req.body.color]
+    console.log("createi mg casllsed")
 
-    console.log(req.body.message.split('\n'))
+    let createImgParams= {
+        msg: req.body.message,
+        baseImg: req.body.baseImg,
+        time: req.body.time,
+        userAddress:req.body.userAddress,
+        color: req.body.color
+    }
+    console.log(createImgParams.msg)
+    await imgTools.createImg(createImgParams)
+    await delay(500);//Delay ensures that frontend will query the image after its updated
+    res.json("Create Img Success")
 
-    //const message = text.concat('\n', time)
-
-
-
+/*
     Jimp.read(imgLink, async function (err, image) {
         console.log("Creating img now")
         if(err){
             console.log("ERROR")
             res.send("Invalid image")
         }
-
         if(color=='black'){
             var font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
             var dateFont = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
@@ -53,29 +86,27 @@ app.post('/createImg', async(req,res)=>{
             var font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
             var dateFont = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE);
         }
-    
         image
           .resize(360, 360) // resize
           .quality(60) // set JPEG quality
           .print(font, 10, 40, text, 360, (err, img, {x,y})=>{
-            image.print(dateFont, 10, 300, time, 360)
+            img.print(dateFont, 10, 300, time, 360)
             .write(`./public/draft/${userAddress}.png`); // save
             res.json('Create Img Success')
 
           })
-
-
-
     });
-
+*/
 })
 
-app.get('/draft/:address', (req,res)=>{
+
+//IMG PATH
+app.get('/draft/:address', async (req,res)=>{
     console.log("draft called")
     res.sendFile(__dirname + '/public/draft/'+ req.params.address);
 })
 app.get('/nft/:tokenId', (req,res)=>{
-    res.sendFile(`./public/nft/${req.params.tokenId}`);
+    res.sendFile(__dirname+`/public/nft/${req.params.tokenId}.png`);
 })
 
 app.listen(port, ()=>{

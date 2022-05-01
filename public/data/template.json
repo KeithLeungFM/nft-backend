@@ -1,0 +1,12 @@
+{
+    "tokenId": "",
+    "msg": "Sample message",
+    "msgUpdatedBefore":"false",
+    "currentOwner":"",
+    "img":{
+        "path":"",
+        "time":""
+    },
+    "transferHistory":[],
+    "updateHistory":[]
+}

@@ -1,0 +1,37 @@
+{
+    "gallery":{
+        "numTokens":0
+
+    },
+    "tokens":[
+        {
+            "tokenId":1,
+            "lastPrice":"",
+            "message":"Message of Token 1",
+            "owner":"",
+            "time":"November 1, 2022"
+        },
+        {
+            "tokenId":2,
+            "lastPrice":"",
+            "message":"Message of Token 2",
+            "owner":"",
+            "time":"November 2, 2022"
+        },
+        {
+            "tokenId":3,
+            "lastPrice":"",
+            "message":"Message of Token 3",
+            "owner":"",
+            "time":"November 3, 2022"
+        },
+        {
+            "tokenId":4,
+            "lastPrice":"",
+            "message":"Message of Token 4",
+            "owner":"",
+            "time":"November 4, 2022"
+        }
+    ]
+
+}
