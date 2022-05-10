@@ -2,6 +2,8 @@ const express = require('express');
 const Jimp = require('jimp')
 
 const bodyParser = require('body-parser')
+const fs = require('fs');
+
 var jsonTools = require('./json-tools')
 const imgTools = require('./img-tools')
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -71,36 +73,39 @@ app.post('/createImg', async(req,res)=>{
     await imgTools.createImg(createImgParams)
     await delay(500);//Delay ensures that frontend will query the image after its updated
     res.json("Create Img Success")
+})
 
-/*
-    Jimp.read(imgLink, async function (err, image) {
-        console.log("Creating img now")
-        if(err){
-            console.log("ERROR")
-            res.send("Invalid image")
-        }
-        if(color=='black'){
-            var font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
-            var dateFont = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
+app.post('/createImgPath', async(req,res)=>{
+    let userAddress = req.body.userAddress
+    let randomNumber = req.body.randomNumber
+    try {
+        //Check if the filepath exists
+        if (!fs.existsSync(`./public/nft${randomNumber}.png`)) {
+            console.log("GOT HERE")
+            //Count number of pics to get tokenId
+            fs.readdir("./public/nft", (err, files) => {
+                let tokenId = files.length -1
+                fs.copyFile(`./public/draft/${userAddress}.png`, `./public/nft/${randomNumber}.png`, (err) => {
+                    if (err) {console.log(err)};
+                    res.json(tokenId)
+                  });
+              });
         }else{
-            var font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE);
-            var dateFont = await Jimp.loadFont(Jimp.FONT_SANS_16_WHITE);
+            res.json("tokenId path exists")
         }
-        image
-          .resize(360, 360) // resize
-          .quality(60) // set JPEG quality
-          .print(font, 10, 40, text, 360, (err, img, {x,y})=>{
-            img.print(dateFont, 10, 300, time, 360)
-            .write(`./public/draft/${userAddress}.png`); // save
-            res.json('Create Img Success')
+      } catch(err) {
+        console.error(err)
+      }
 
-          })
-    });
-*/
+
+
 })
 
 
-//IMG PATH
+app.post('/withdraw', async(req,res)=>{
+    
+})
+
 app.get('/draft/:address', async (req,res)=>{
     console.log("draft called")
     res.sendFile(__dirname + '/public/draft/'+ req.params.address);
