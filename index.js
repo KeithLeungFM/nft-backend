@@ -28,15 +28,7 @@ app.get('/', async (req,res)=>{
 })
 
 app.get('/test', async (req,res)=>{
-
-    let createImgParams= {
-        msg: "message",
-        baseImg:"https://images.unsplash.com/photo-1650351858876-eec34590260c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
-        time: new Date().toDateString(),
-        userAddress:"Address",
-        color:"white"
-    }
-    imgTools.createImg(createImgParams)
+    res.send("hello world")
 })
 
 app.get('/new', async(req,res)=>{
