@@ -53,11 +53,11 @@ app.post('/createImgPath', async(req,res)=>{
             //Count number of pics to get tokenId
             jsonTools.totalAmountOfTokens(result=>{
                 console.log(result)
-                let tokenId = result + 1
+                let tokenId = result //tokens start at 0
                 console.log(randomNumber)
-                fs.copyFile(`./public/draft/${userAddress}.png`, `./public/img/${randomNumber}.png`, (err) => {
+                fs.copyFile(`./public/draft/${userAddress}.png`, `./public/img/${tokenId}.png`, (err) => {
                     if (err) {console.log(err)};
-                    jsonTools.addTokenToJson(userAddress,msg,randomNumber)
+                    jsonTools.addTokenToJson(userAddress,msg,tokenId)
                     res.json(tokenId)
                   });
             })

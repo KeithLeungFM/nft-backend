@@ -22,7 +22,7 @@ module.exports = {
         console.log("addtokentoJson")
         this.totalAmountOfTokens(tokenId => {
             newTokenObject = {}
-            newTokenObject.tokenId = tokenId + 1
+            newTokenObject.tokenId = tokenId
             newTokenObject.owner=owner
             newTokenObject.description=msg
             newTokenObject.image = `https://blockchainstories.xyz/img/${imgPath}`
@@ -36,7 +36,7 @@ module.exports = {
                     "value": msg
                   }
             ]
-            fs.writeFileSync(`${dataDir}/nft/${tokenId}.json`, JSON.stringify(newTokenObject))
+            fs.writeFileSync(`${dataDir}/nft/${newTokenObject.tokenId}.json`, JSON.stringify(newTokenObject))
             var gallery = JSON.parse(fs.readFileSync(`${dataDir}/gallery.json`).toString());
             gallery.tokens.push(newTokenObject)
             console.log(gallery)
