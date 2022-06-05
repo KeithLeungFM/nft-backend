@@ -1,4 +1,4 @@
-const Jimp = require('Jimp')
+const Jimp = require('jimp')
 
 
 module.exports = {
