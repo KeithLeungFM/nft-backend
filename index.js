@@ -20,39 +20,7 @@ app.use(cors())
 //app.use(bodyParser.urlencoded({extended: true }));
 app.use(bodyParser.json({extended: true }));
 
-
-
-app.get('/', async (req,res)=>{
-    console.log("HI")
-    res.send("hi")
-})
-
-app.get('/test', async (req,res)=>{
-    res.send("hello world")
-})
-
-app.get('/new', async(req,res)=>{
-    //Return newest listings ie the OLDEST JSONS
-})
-
-app.post('/search', async(req,res)=>{
-    //Return listing based on param DATE, MSG
-    const searchParams = req.body //.date .msg
-
-})
-
-app.post('/gallery', async(req,res)=>{
-    //
-    const galleryParams = req.body // .startToken, .numberOfTokens
-
-    let result = await jsonTools.readGallery()
-    res.json(result)
-
-
-})
-
 app.post('/createImg', async(req,res)=>{
-    console.log("createi mg casllsed")
 
     let createImgParams= {
         msg: req.body.message,
@@ -61,41 +29,41 @@ app.post('/createImg', async(req,res)=>{
         userAddress:req.body.userAddress,
         color: req.body.color
     }
-    console.log(createImgParams.msg)
-    await imgTools.createImg(createImgParams)
-    await delay(500);//Delay ensures that frontend will query the image after its updated
-    res.json("Create Img Success")
+
+    const createdImage = await imgTools.createImg(createImgParams, async result=>{
+        if(result=="Success"){
+            await delay(500);//Delay ensures that frontend will query the image after its updated
+            res.json("Success")
+        }else{
+            res.json("Error")
+        }
+    })
+
+
+
 })
 
 app.post('/createImgPath', async(req,res)=>{
     let userAddress = req.body.userAddress
-    let randomNumber = req.body.randomNumber
-    try {
+    let msg = req.body.msg
+    let randomNumber = Math.random().toString(36).slice(2)
+    console.log("createimgpath called")
         //Check if the filepath exists
         if (!fs.existsSync(`./public/nft${randomNumber}.png`)) {
-            console.log("GOT HERE")
             //Count number of pics to get tokenId
-            fs.readdir("./public/nft", (err, files) => {
-                let tokenId = files.length -1
-                fs.copyFile(`./public/draft/${userAddress}.png`, `./public/nft/${randomNumber}.png`, (err) => {
+            jsonTools.totalAmountOfTokens(result=>{
+                console.log(result)
+                let tokenId = result + 1
+                console.log(randomNumber)
+                fs.copyFile(`./public/draft/${userAddress}.png`, `./public/img/${randomNumber}.png`, (err) => {
                     if (err) {console.log(err)};
+                    jsonTools.addTokenToJson(userAddress,msg,randomNumber)
                     res.json(tokenId)
                   });
-              });
+            })
         }else{
-            res.json("tokenId path exists")
+            res.json("tokenId exists")
         }
-      } catch(err) {
-        console.error(err)
-      }
-
-
-
-})
-
-
-app.post('/withdraw', async(req,res)=>{
-    
 })
 
 app.get('/draft/:address', async (req,res)=>{
@@ -103,7 +71,13 @@ app.get('/draft/:address', async (req,res)=>{
     res.sendFile(__dirname + '/public/draft/'+ req.params.address);
 })
 app.get('/nft/:tokenId', (req,res)=>{
-    res.sendFile(__dirname+`/public/nft/${req.params.tokenId}.png`);
+    jsonTools.getMetaData(req.params.tokenId, (result)=>{
+        res.send(result)
+    })
+})
+
+app.get('/img/:tokenId', (req,res)=>{
+    res.sendFile(__dirname+`/public/img/${req.params.tokenId}.png`);
 })
 
 app.listen(port, ()=>{

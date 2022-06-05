@@ -1,29 +1,49 @@
 fs = require('fs');
-dataDir = './public/data/'
+dataDir = './public/data'
 
-var templateFileName = dataDir + 'template.json';
-var template = JSON.parse(fs.readFileSync(templateFileName).toString());
-
-var galleryFileName = dataDir + 'gallery.json';
+var galleryFileName = dataDir + '/gallery.json';
 
 
 module.exports = {
-    totalAmountOfTokens: function(){
-        fs.readdir(dataDir+'nft', (err, files) => {
-            return(files.length);
-            });
+    getMetaData: function(tokenStringId, callback){
 
+        const file = JSON.parse(fs.readFileSync(`${dataDir}/nft/${tokenStringId}.json`).toString());
+        callback(file)
     },
-    readGallery: async function(){
+    totalAmountOfTokens: function(callback){
+
         var gallery = JSON.parse(fs.readFileSync(galleryFileName).toString());
-        return gallery.tokens
+        gallery.tokens.length
+        console.log(gallery.tokens)
+        const returnable = gallery.tokens.length
+        callback(returnable);
     },
-    mintToken: function(tokenId, owner, msg, imgPath){
-            newTokenObject = template
-            newTokenObject.tokenId = tokenId
+    addTokenToJson: function(owner, msg, imgPath){
+        console.log("addtokentoJson")
+        this.totalAmountOfTokens(tokenId => {
+            newTokenObject = {}
+            newTokenObject.tokenId = tokenId + 1
             newTokenObject.owner=owner
-            newTokenObject.msg=msg
-            fs.writeFileSync(`${dataDir}${tokenId}.json`, JSON.stringify(newTokenObject))
+            newTokenObject.description=msg
+            newTokenObject.image = `https://blockchainstories.xyz/img/${imgPath}`
+            newTokenObject.attributes=[
+                {
+                    "trait_type": "Date", 
+                    "value": new Date().toDateString() 
+                  }, 
+                  {
+                    "trait_type": "Message", 
+                    "value": msg
+                  }
+            ]
+            fs.writeFileSync(`${dataDir}/nft/${tokenId}.json`, JSON.stringify(newTokenObject))
+            var gallery = JSON.parse(fs.readFileSync(`${dataDir}/gallery.json`).toString());
+            gallery.tokens.push(newTokenObject)
+            console.log(gallery)
+
+            fs.writeFileSync(`${dataDir}/gallery.json`, JSON.stringify(gallery))
+        })
+
     },
     transferOwner: function(tokenId, oldOwner, newOwner) {
         var oldTokenObject = JSON.parse(fs.readFileSync(`${tokenId}.json`).toString());
