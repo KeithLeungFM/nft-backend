@@ -46,20 +46,19 @@ app.post('/createImg', async(req,res)=>{
 app.post('/createImgPath', async(req,res)=>{
     let userAddress = req.body.userAddress
     let msg = req.body.msg
-    let randomNumber = Math.random().toString(36).slice(2)
-    console.log("createimgpath called")
+    let alphaNumId = Math.random().toString(36).slice(2)
         //Check if the filepath exists
-        if (!fs.existsSync(`./public/nft${randomNumber}.png`)) {
+        if (!fs.existsSync(`./public/nft${alphaNumId}.png`)) {
             //Count number of pics to get tokenId
             jsonTools.totalAmountOfTokens(result=>{
-                console.log(result)
                 let tokenId = result //tokens start at 0
-                console.log(randomNumber)
-                fs.copyFile(`./public/draft/${userAddress}.png`, `./public/img/${tokenId}.png`, (err) => {
+                fs.copyFile(`./public/draft/${userAddress}.png`, `./public/img/${alphaNumId}.png`, (err) => {
                     if (err) {console.log(err)};
-                    jsonTools.addTokenToJson(userAddress,msg,tokenId)
+                    jsonTools.addTokenToJson(userAddress,msg,alphaNumId)
                     res.json(tokenId)
-                  });
+                    //res.redirect(`https://testnets.opensea.io/assets/rinkeby/${process.env.CONTRACT_ADDRESS}/${tokenId}`)
+                    //res.redirect(`https://testnets.opensea.io/assets/rinkeby/0x8f43b4df5123e59b3932c161a87a90c3a5a2dddb/${tokenId}`)
+                });
             })
         }else{
             res.json("tokenId exists")
@@ -67,7 +66,6 @@ app.post('/createImgPath', async(req,res)=>{
 })
 
 app.get('/draft/:address', async (req,res)=>{
-    console.log("draft called")
     res.sendFile(__dirname + '/public/draft/'+ req.params.address);
 })
 app.get('/nft/:tokenId', (req,res)=>{

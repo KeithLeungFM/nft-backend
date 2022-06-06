@@ -17,7 +17,6 @@ module.exports = {
                 img.print(dateFont, 10, 300, params.time, 360)
                 .write(`./public/draft/${params.userAddress}.png`); // save
               })
-              console.log("2")
 
             callback("Success")
 

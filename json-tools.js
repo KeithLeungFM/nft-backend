@@ -14,18 +14,18 @@ module.exports = {
 
         var gallery = JSON.parse(fs.readFileSync(galleryFileName).toString());
         gallery.tokens.length
-        console.log(gallery.tokens)
         const returnable = gallery.tokens.length
         callback(returnable);
     },
-    addTokenToJson: function(owner, msg, imgPath){
+    addTokenToJson: function(owner, msg, alphaNumId){
         console.log("addtokentoJson")
         this.totalAmountOfTokens(tokenId => {
             newTokenObject = {}
             newTokenObject.tokenId = tokenId
+            newTokenObject.alphaNumId = alphaNumId
             newTokenObject.owner=owner
             newTokenObject.description=msg
-            newTokenObject.image = `https://blockchainstories.xyz/img/${imgPath}`
+            newTokenObject.image = `https://blockchainstories.xyz/img/${alphaNumId}`
             newTokenObject.attributes=[
                 {
                     "trait_type": "Date", 
@@ -36,10 +36,9 @@ module.exports = {
                     "value": msg
                   }
             ]
-            fs.writeFileSync(`${dataDir}/nft/${newTokenObject.tokenId}.json`, JSON.stringify(newTokenObject))
+            fs.writeFileSync(`${dataDir}/nft/${alphaNumId}.json`, JSON.stringify(newTokenObject))
             var gallery = JSON.parse(fs.readFileSync(`${dataDir}/gallery.json`).toString());
             gallery.tokens.push(newTokenObject)
-            console.log(gallery)
 
             fs.writeFileSync(`${dataDir}/gallery.json`, JSON.stringify(gallery))
         })
