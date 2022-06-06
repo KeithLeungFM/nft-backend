@@ -25,7 +25,7 @@ module.exports = {
             newTokenObject.alphaNumId = alphaNumId
             newTokenObject.owner=owner
             newTokenObject.description=msg
-            newTokenObject.image = `https://blockchainstories.xyz/img/${alphaNumId}`
+            newTokenObject.image = `https://blockchainstories.xyz/api/img/${alphaNumId}`
             newTokenObject.attributes=[
                 {
                     "trait_type": "Date", 

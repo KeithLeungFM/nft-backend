@@ -46,12 +46,11 @@ app.post('/createImg', async(req,res)=>{
 app.post('/createImgPath', async(req,res)=>{
     let userAddress = req.body.userAddress
     let msg = req.body.msg
-    let alphaNumId = Math.random().toString(36).slice(2)
+    let alphaNumId = req.body.randomNumber
         //Check if the filepath exists
         if (!fs.existsSync(`./public/nft${alphaNumId}.png`)) {
             //Count number of pics to get tokenId
-            jsonTools.totalAmountOfTokens(result=>{
-                let tokenId = result //tokens start at 0
+            jsonTools.totalAmountOfTokens(tokenId=>{
                 fs.copyFile(`./public/draft/${userAddress}.png`, `./public/img/${alphaNumId}.png`, (err) => {
                     if (err) {console.log(err)};
                     jsonTools.addTokenToJson(userAddress,msg,alphaNumId)
